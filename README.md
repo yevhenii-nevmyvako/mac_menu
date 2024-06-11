@@ -31,9 +31,17 @@ input filepath to app.py to src_filepath and run cmd:
 ```bash
 run-flask-app
 ```
+
+### Endpoints
+```
+http://127.0.0.1:8000/all_products/
+http://127.0.0.1:8000/products/МакКріспі
+http://127.0.0.1:8000/products/МакКріспі/fats
+```
 also tou can use in docker
 ```bash
 docker build -t tag .
+```bash
+docker run -p 8000:8000 <image_name:tag>
 ```
-```docker run -p 8000:8000 <image_name:tag>```
 
