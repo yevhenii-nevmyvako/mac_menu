@@ -10,7 +10,7 @@ def load_json_data(src_filepath: str):
 
 
 # TODO: Input source json filepath
-products = load_json_data('dst_filepath')
+products = load_json_data('src_filepath')
 
 
 @app.route('/all_products/', methods=['GET'])
