@@ -6,7 +6,7 @@
 ### How to install Project
 clone project from repo:
 ```bash
-git clone https://github.com/yevhenii-nevmyvako/mac_menu
+git clone git@github.com:yevhenii-nevmyvako/mac_menu.git
 ```
 install virtual environment and setup the project:
 ```bash
