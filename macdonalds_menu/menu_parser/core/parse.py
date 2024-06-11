@@ -1,9 +1,21 @@
+import logging
+
 import requests
 from bs4 import BeautifulSoup
 from requests import HTTPError
 
 from macdonalds_menu.menu_parser.core.const import ProductSuit, Product, BASE_URL, SINGLE_PAGE_URL
 from macdonalds_menu.menu_parser.core.save_to_json import save_data_to_json
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("parser.log"),
+        logging.StreamHandler()
+    ]
+)
 
 
 def set_product_suits(nutrient_facts: dict) -> dict:
@@ -56,7 +68,9 @@ def get_product_ids() -> list:
     response = requests.get(BASE_URL).content
     soup = BeautifulSoup(response, 'html.parser')
     page_soup = soup.find_all('li', {'data-product-id': True})
-    return [element['data-product-id'] for element in page_soup]
+    product_ids = [element['data-product-id'] for element in page_soup]
+    logging.info(f"Fetched product ids: {product_ids}")
+    return product_ids
 
 
 def get_product_data() -> list:
@@ -76,11 +90,15 @@ def get_product_data() -> list:
             nutrient_facts = product_param.get('nutrient_facts', {}).get('nutrient', [])
 
             if not nutrient_facts:
+                if not nutrient_facts:
+                    logging.warning(f"No nutrient facts found for product ID {page}")
+                    continue
                 continue
 
             name, description = product_param['item_name'], product_param['description']
             suits = set_product_suits(nutrient_facts)
             products.append(Product(name=name, description=description, product_suits=suits))
+            logging.info(f"Processed product: {name}")
 
         except (HTTPError, KeyError) as e:
             print(f"Error when processing goods with ID {page}: {e}")
@@ -108,3 +126,4 @@ def product_to_dict(product: Product) -> dict:
 def save_product_to_json(dst_filepath: str) -> None:
     products = get_product_data()
     save_data_to_json([product_to_dict(product) for product in products], dst_filepath)
+    logging.info(f"Saved products data to {dst_filepath}")
